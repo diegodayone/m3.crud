@@ -1,6 +1,5 @@
 getEvents = async () => {
-    const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const url = "https://strive-school-testing-apis.herokuapp.com/api/agenda/"; // site that doesn’t send Access-Control-*
-    var response = await fetch(proxyurl + url);
-    return await response.json();
+    var response = await fetch("https://strivetestapi.azurewebsites.net/api/agenda/", { mode: 'no-cors' });
+    console.log(await response.text());
+    //return await response.json();
 }

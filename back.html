@@ -97,7 +97,21 @@
 
     <script src="helper.js"></script>
     <script>
+      var id = null;
+
       window.onload = async () => {
+        var event = null;
+        var urlParams = new URLSearchParams(window.location.search);
+        id = urlParams.get("id");
+
+        if (id) {
+          event = await getEvent(id);
+          document.querySelector("#name").value = event.name;
+          document.querySelector("#description").value = event.description;
+          document.querySelector("#time").value = event.time.split(".")[0];
+          document.querySelector("#price").value = event.price;
+        }
+
         var events = await getEvents();
         var myEvents = document.querySelector("#myEvents");
 
@@ -139,16 +153,34 @@
           price: document.querySelector("#price").value
         };
 
-        var response = await fetch(
-          "https://strivetestapi.azurewebsites.net/api/agenda/",
-          {
+        const url = "https://strivetestapi.azurewebsites.net/api/agenda/";
+
+        if (id) {
+          var response = await fetch(url + id, {
+            method: "PUT",
+            body: JSON.stringify(myEvent),
+            headers: new Headers({
+              "Content-Type": "application/json"
+            })
+          });
+        } else {
+          var response = await fetch(url, {
             method: "POST",
             body: JSON.stringify(myEvent),
             headers: new Headers({
               "Content-Type": "application/json"
             })
-          }
-        );
+          });
+        }
+
+        // var response = await fetch(id ? url + id : url, {
+        //   method: id ? "PUT" : "POST",
+        //   body: JSON.stringify(myEvent),
+        //   headers: new Headers({
+        //     "Content-Type": "application/json"
+        //   })
+        // });
+
         var json = await response.json();
 
         await spinner.classList.toggle("invisible");
